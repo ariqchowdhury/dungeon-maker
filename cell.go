@@ -15,21 +15,26 @@ func is_point_in_cell(c Cell, x, y int) bool {
 
 
 func cell_distance_xy_components(c1, c2 Cell) (int, int) {
-	return (c2.x-c1.x), (c2.y-c1.y)
+	return int_abs(c2.x-c1.x), int_abs(c2.y-c1.y)
 }
 
 func cell_distance(c1, c2 Cell) float64 {
-	return math.Sqrt(float64((c1.x-c2.x)*(c1.x-c2.x) + (c1.y-c2.y)*(c1.y*c2.y)))
+
+	dx := (c1.x-c2.x)
+	dy := (c1.y-c2.y)
+	sum_squares := dx*dx + dy*dy
+	sqrt := math.Sqrt(float64(sum_squares))
+
+	return sqrt
 }
 
-func does_intersect(c1, c2 Cell) bool {
-	var b1 bool = (c1.radius-c2.radius)*(c1.radius-c2.radius) <= 
+// Checks if circles intersect or if one circle is completely in the other
+// So this is more of a collision check than an intersect check
+func does_collide(c1, c2 Cell) bool {
+	var b1 bool = (c1.radius+c2.radius)*(c1.radius+c2.radius) > 
 	(c1.x-c2.x)*(c1.x-c2.x) + (c1.y-c2.y)*(c1.y-c2.y)
 
-	var b2 bool = (c1.radius+c2.radius)*(c1.radius+c2.radius) >= 
-	(c1.x-c2.x)*(c1.x-c2.x) + (c1.y-c2.y)*(c1.y-c2.y)
-
-	return b1 && b2
+	return b1
 }
 
 
