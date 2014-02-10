@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"io"
 	"container/list"
-	"math"
 )
 
 type Dungeon struct {
@@ -35,9 +34,7 @@ func (d *Dungeon) CreateCells(num_cells int, std_dev, mean float64) {
 	d.cells = list.New()
 
 	for i := 0; i < num_cells; i++ {
-		radius := r.NormFloat64() * std_dev
-		radius = math.Abs(radius)
-		radius *= 20.0
+		radius := r.NormFloat64() * std_dev + mean
 		x := int(r.NormFloat64() * dim_std_dev + dim_mean)
 		y := int(r.NormFloat64() * dim_std_dev + dim_mean)
 
@@ -105,7 +102,7 @@ func (d *Dungeon) SeperateCells() {
 				delta_x, delta_y := cell_distance_xy_components(iter.Value.(Cell), *i.Value.(*Cell))
 
 				cell_ptr := i.Value.(*Cell)
-
+				
 				cell_ptr.x += (delta_x / 2)
 				cell_ptr.y += (delta_y / 2)
 
