@@ -50,7 +50,7 @@ func (root *CellQuadTree) init (num_cells int) {
 
 // Insert a Cell into the tree. The position will depend on 
 // how 'close' it is to Cells in the root
-func (root *CellQuadTree) insert (c Cell) bool {
+func (root *CellQuadTree) insert (c *Cell) bool {
 
 	if !root.bounding_box.contains_point(c.x, c.y) {
 		return false
@@ -125,7 +125,7 @@ func (root *CellQuadTree) check_range (target_range BoundingBox) *list.List {
 
 	// Check this level of quad for cells in target range
 	for itr := root.cells.Front(); itr != nil; itr = itr.Next() {
-		if target_range.contains_point(itr.Value.(Cell).x, itr.Value.(Cell).y) {
+		if target_range.contains_point(itr.Value.(*Cell).x, itr.Value.(*Cell).y) {
 			cells_in_range.PushBack(itr.Value)
 		}
 	}
@@ -147,16 +147,10 @@ func (root *CellQuadTree) print () {
 	for itr := root.cells.Front(); itr != nil; itr = itr.Next() { 
 		fmt.Println(itr.Value)
 	}
-	fmt.Println("\n")
-
 	if root.nw != nil {
-		fmt.Println("nw:", "\n")
 		root.nw.print()
-		fmt.Println("ne:", "\n")
 		root.ne.print()
-		fmt.Println("sw:", "\n")
 		root.sw.print()
-		fmt.Println("se:", "\n")
 		root.se.print()
 	}
 

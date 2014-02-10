@@ -32,3 +32,4 @@ func does_intersect(c1, c2 Cell) bool {
 	return b1 && b2
 }
 
+
