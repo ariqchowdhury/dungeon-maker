@@ -13,6 +13,10 @@ type CellPair struct {
 	c1, c2 Cell
 }
 
+func is_point_in_cell(c Cell, x, y int) bool {
+	return (c.x - x)*(c.x-x) + (c.y - y)*(c.y - y) < c.radius*c.radius
+}
+
 func cell_distance(c1, c2 Cell) float64 {
 	return math.Sqrt(float64((c1.x-c2.x)*(c1.x-c2.x) + (c1.y-c2.y)*(c1.y*c2.y)))
 }
@@ -26,3 +30,4 @@ func does_intersect(c1, c2 Cell) bool {
 
 	return b1 && b2
 }
+
