@@ -34,7 +34,7 @@ func box_does_intersect(b1, b2 BoundingBox) bool {
 type CellQuadTree struct {
 	bounding_box BoundingBox
 
-	cells []Cell
+	cells *list.List
 	num_cells int
 
 	nw *CellQuadTree
@@ -44,8 +44,7 @@ type CellQuadTree struct {
 }
 
 func (root *CellQuadTree) init (num_cells int) {
-	c := make([]Cell, 0, num_cells)
-	root.cells = c
+	root.cells = list.New()
 	root.num_cells = num_cells
 }
 
@@ -57,8 +56,8 @@ func (root *CellQuadTree) insert (c Cell) bool {
 		return false
 	}
 
-	if len(root.cells) < root.num_cells {
-		root.cells = append(root.cells, c)
+	if root.cells.Len() < root.num_cells {
+		root.cells.PushBack(c)
 		return true
 	}
 
@@ -125,9 +124,9 @@ func (root *CellQuadTree) check_range (target_range BoundingBox) *list.List {
 	}
 
 	// Check this level of quad for cells in target range
-	for _, cell := range root.cells {
-		if target_range.contains_point(cell.x, cell.y) {
-			cells_in_range.PushBack(cell)
+	for itr := root.cells.Front(); itr != nil; itr = itr.Next() {
+		if target_range.contains_point(itr.Value.(Cell).x, itr.Value.(Cell).y) {
+			cells_in_range.PushBack(itr.Value)
 		}
 	}
 
@@ -144,7 +143,12 @@ func (root *CellQuadTree) check_range (target_range BoundingBox) *list.List {
 }
 
 func (root *CellQuadTree) print () {
-	fmt.Println(root.cells, "\n")
+	
+	for itr := root.cells.Front(); itr != nil; itr = itr.Next() { 
+		fmt.Println(itr.Value)
+	}
+	fmt.Println("\n")
+
 	if root.nw != nil {
 		fmt.Println("nw:", "\n")
 		root.nw.print()
