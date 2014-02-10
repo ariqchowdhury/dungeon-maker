@@ -1,6 +1,9 @@
 package dungeon
 
-import "fmt"
+import (
+	"fmt"
+	"container/list"
+)
 
 func int_abs(x int) int {
 	if x < 0 {
@@ -15,11 +18,17 @@ type BoundingBox struct {
 }
 
 func (bb BoundingBox) contains_point(x, y int) bool {
-	return int_abs(x - bb.x) < bb.half_width && int_abs(y - bb.y) < bb.half_width
+	var check_x bool = int_abs(x - bb.x) < bb.half_width
+	var check_y bool = int_abs(y - bb.y) < bb.half_width
+
+	return check_x && check_y
 }
 
 func box_does_intersect(b1, b2 BoundingBox) bool {
-	return int_abs(b1.x - b2.x) < (b1.half_width + b2.half_width) && int_abs(b1.y - b2.y) < (b1.half_width + b2.half_width)
+	var check_x bool = int_abs(b1.x - b2.x) < (b1.half_width + b2.half_width)
+	var check_y bool = int_abs(b1.y - b2.y) < (b1.half_width + b2.half_width)
+
+	return check_x && check_y
 }
 
 type CellQuadTree struct {
@@ -44,7 +53,7 @@ func (root *CellQuadTree) init (num_cells int) {
 // how 'close' it is to Cells in the root
 func (root *CellQuadTree) insert (c Cell) bool {
 
-	if root.bounding_box.contains_point(c.x, c.y) {
+	if !root.bounding_box.contains_point(c.x, c.y) {
 		return false
 	}
 
@@ -106,8 +115,32 @@ func (root *CellQuadTree) subdivide () {
 
 }
 
-func (root *CellQuadTree) check_range (c Cell) {
+func (root *CellQuadTree) check_range (target_range BoundingBox) *list.List {
+	// List of results
+	cells_in_range := list.New()
 
+	// if the range doesn't intersect root's bounding box, abort
+	if !box_does_intersect(root.bounding_box, target_range) {
+		return cells_in_range
+	}
+
+	// Check this level of quad for cells in target range
+	for _, cell := range root.cells {
+		if target_range.contains_point(cell.x, cell.y) {
+			cells_in_range.PushBack(cell)
+		}
+	}
+
+	if root.nw == nil {
+		return cells_in_range
+	}
+
+	cells_in_range.PushBackList(root.nw.check_range(target_range))
+	cells_in_range.PushBackList(root.ne.check_range(target_range))
+	cells_in_range.PushBackList(root.sw.check_range(target_range))
+	cells_in_range.PushBackList(root.se.check_range(target_range))
+
+	return cells_in_range
 }
 
 func (root *CellQuadTree) print () {
