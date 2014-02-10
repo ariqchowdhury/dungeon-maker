@@ -178,36 +178,18 @@ func (d *Dungeon) SeperateCells() {
 				}
 
 				if cell_ptr.y >= d.boundary_half_dimension && dy < 0 { 
-					cell_ptr.y += dy
+					cell_ptr.y -= dy
 				} else if cell_ptr.y >= d.boundary_half_dimension && dy > 0 {
-					cell_ptr.y -= dy
-				} else if cell_ptr.y < d.boundary_half_dimension && dy < 0 {
-					cell_ptr.y -= dy
-				} else {
 					cell_ptr.y += dy
+				} else if cell_ptr.y < d.boundary_half_dimension && dy < 0 {
+					cell_ptr.y += dy
+				} else {
+					cell_ptr.y -= dy
 				}
-
 			}
 			d.PlaceCellsQuadTree()
 		}
 		max_itr++
-	}
-
-	// Cells that got pushed off the map get stuck at borders (for testing)
-	for i := d.cells.Front(); i != nil; i = i.Next() {
-		cell_ptr := i.Value.(*Cell)
-		if cell_ptr.x < 0 {
-			cell_ptr.x = 0
-		}
-		if cell_ptr.y < 0 {
-			cell_ptr.y = 0
-		}
-		if cell_ptr.x > d.boundary_half_dimension*2 {
-			cell_ptr.x = d.boundary_half_dimension
-		}
-		if cell_ptr.y < d.boundary_half_dimension*2 {
-			cell_ptr.y = d.boundary_half_dimension
-		}
 	}
 }
 
