@@ -111,7 +111,7 @@ func (d *Dungeon) SeperateCells() {
 	var all_seperated bool = false
 	var max_itr int = 0
 
-	for !all_seperated && max_itr < 20 {
+	for !all_seperated && max_itr < 40 {
 		all_seperated = true
 		for i := d.cells.Front(); i != nil; i = i.Next() {
 			// Check if a Cell has fellow cells in our target range bounding box
@@ -153,15 +153,6 @@ func (d *Dungeon) SeperateCells() {
 				theta := math.Atan2(delta_y, delta_x)
 				dx_f := scale * math.Cos(theta)
 				dy_f := scale * math.Sin(theta)
-
-				dx_f *= 0.2
-				dy_f *= 0.2
-
-				fmt.Println("distance:", distance)
-				fmt.Println("rad sum", sum_r)
-				fmt.Println("dx", dx_f)
-				fmt.Println("dy", dy_f)
-				fmt.Println("-------------")
 
 				if cell_ptr.x >= me_ptr.x {
 					cell_ptr.x += dx_f
