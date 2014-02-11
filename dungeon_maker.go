@@ -57,7 +57,7 @@ func (d *Dungeon) CreateCellsFromFile(filename string) {
 			fmt.Println(es)
 		}
 
-		cell := &Cell{int(id), int(x), int(y), int(radius)}
+		cell := &Cell{int(id), float64(x), float64(y), float64(radius)}
 		d.cells.PushBack(cell)
 		line, e = reader.ReadString('\n')
 	}
@@ -77,10 +77,10 @@ func (d *Dungeon) CreateCells(num_cells int, std_dev, mean float64) {
 
 	for i := 0; i < num_cells; i++ {
 		radius := r.NormFloat64() * std_dev + mean
-		x := int(r.NormFloat64() * dim_std_dev + dim_mean)
-		y := int(r.NormFloat64() * dim_std_dev + dim_mean)
+		x := r.NormFloat64() * dim_std_dev + dim_mean
+		y := r.NormFloat64() * dim_std_dev + dim_mean
 
-		cell := &Cell{i, x, y, int(radius)}
+		cell := &Cell{i, x, y, radius}
 		d.cells.PushBack(cell)
 	}
 
@@ -116,7 +116,7 @@ func (d *Dungeon) SeperateCells() {
 		for i := d.cells.Front(); i != nil; i = i.Next() {
 			// Check if a Cell has fellow cells in our target range bounding box
 			// target range is a square with half width of 2*max radius (estimate)
-			target_range := BoundingBox{i.Value.(*Cell).x, i.Value.(*Cell).y, d.target_range_bb_half_width}
+			target_range := BoundingBox{int(i.Value.(*Cell).x), int(i.Value.(*Cell).y), d.target_range_bb_half_width}
 			l := d.cell_quad_tree.check_range(target_range)
 
 			cells_that_collide := list.New()
@@ -144,48 +144,37 @@ func (d *Dungeon) SeperateCells() {
 				delta_x, delta_y := cell_distance_xy_components(*neighbour.Value.(*Cell), *i.Value.(*Cell))
 				distance := cell_distance(*neighbour.Value.(*Cell), *i.Value.(*Cell))
 
-				fmt.Println("distance between: ",*neighbour.Value.(*Cell) ,*i.Value.(*Cell), " == ", distance )
-
 				cell_ptr := neighbour.Value.(*Cell)
 				me_ptr := i.Value.(*Cell)
-				// var dx, dy int
-
-				fmt.Println(distance)
 
 				sum_r := cell_ptr.radius + me_ptr.radius
-				scale := sum_r - int(distance)
+				scale := sum_r - distance
 
-				theta := math.Atan2(float64(delta_y), float64(delta_x))
-				dx_f := float64(scale) * math.Cos(theta)
-				dy_f := float64(scale) * math.Sin(theta)
-				dx := int(dx_f)
-				dy := int(dy_f)
+				theta := math.Atan2(delta_y, delta_x)
+				dx_f := scale * math.Cos(theta)
+				dy_f := scale * math.Sin(theta)
 
-				fmt.Println("sum_radius:", sum_r)
-				fmt.Println("dx:", dx)
-				fmt.Println("dy:", dy)
-				fmt.Println("-------------------")
+				dx_f *= 0.2
+				dy_f *= 0.2
 
-				// push other people away, unless the push would move closer to origin,
-				if cell_ptr.x >= d.boundary_half_dimension && dx < 0 { 
-					cell_ptr.x -= dx
-				} else if cell_ptr.x >= d.boundary_half_dimension && dx > 0 {
-					cell_ptr.x += dx
-				} else if cell_ptr.x < d.boundary_half_dimension && dx < 0 {
-					cell_ptr.x += dx
+				fmt.Println("distance:", distance)
+				fmt.Println("rad sum", sum_r)
+				fmt.Println("dx", dx_f)
+				fmt.Println("dy", dy_f)
+				fmt.Println("-------------")
+
+				if cell_ptr.x >= me_ptr.x {
+					cell_ptr.x += dx_f
 				} else {
-					cell_ptr.x -= dx
+					cell_ptr.x -= dx_f
 				}
 
-				if cell_ptr.y >= d.boundary_half_dimension && dy < 0 { 
-					cell_ptr.y -= dy
-				} else if cell_ptr.y >= d.boundary_half_dimension && dy > 0 {
-					cell_ptr.y += dy
-				} else if cell_ptr.y < d.boundary_half_dimension && dy < 0 {
-					cell_ptr.y += dy
+				if cell_ptr.y >= me_ptr.y {
+					cell_ptr.y += dy_f
 				} else {
-					cell_ptr.y -= dy
+					cell_ptr.y -= dy_f
 				}
+
 			}
 			d.PlaceCellsQuadTree()
 		}

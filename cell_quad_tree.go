@@ -3,6 +3,7 @@ package dungeon
 import (
 	"fmt"
 	"container/list"
+	"math"
 )
 
 func int_abs(x int) int {
@@ -17,9 +18,9 @@ type BoundingBox struct {
 	half_width int
 }
 
-func (bb BoundingBox) contains_point(x, y int) bool {
-	var check_x bool = int_abs(x - bb.x) < bb.half_width
-	var check_y bool = int_abs(y - bb.y) < bb.half_width
+func (bb BoundingBox) contains_point(x, y float64) bool {
+	var check_x bool = math.Abs(x - float64(bb.x)) < float64(bb.half_width)
+	var check_y bool = math.Abs(y - float64(bb.y)) < float64(bb.half_width)
 
 	return check_x && check_y
 }

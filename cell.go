@@ -6,16 +6,16 @@ import (
 
 type Cell struct {
 	id int
-	x, y, radius int
+	x, y, radius float64
 }
 
-func is_point_in_cell(c Cell, x, y int) bool {
+func is_point_in_cell(c Cell, x, y float64) bool {
 	return (c.x - x)*(c.x-x) + (c.y - y)*(c.y - y) < c.radius*c.radius
 }
 
 
-func cell_distance_xy_components(c1, c2 Cell) (int, int) {
-	return int_abs(c2.x-c1.x), int_abs(c2.y-c1.y)
+func cell_distance_xy_components(c1, c2 Cell) (float64, float64) {
+	return math.Abs(c2.x-c1.x), math.Abs(c2.y-c1.y)
 }
 
 func cell_distance(c1, c2 Cell) float64 {
@@ -23,7 +23,7 @@ func cell_distance(c1, c2 Cell) float64 {
 	dx := (c1.x-c2.x)
 	dy := (c1.y-c2.y)
 	sum_squares := dx*dx + dy*dy
-	sqrt := math.Sqrt(float64(sum_squares))
+	sqrt := math.Sqrt(sum_squares)
 
 	return sqrt
 }
