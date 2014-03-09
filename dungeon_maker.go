@@ -76,7 +76,6 @@ func (d *Dungeon) CreateCellsFromFile(filename string) {
 func (d *Dungeon) CreateCells(num_cells int, std_dev, mean float64) {
 	var sorted_cells []*Cell
 
-
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	dim_std_dev := float64(d.boundary_half_dimension / 5)
@@ -129,7 +128,7 @@ func (d *Dungeon) SeperateCells() {
 	var all_seperated bool = false
 	var max_itr int = 0
 
-	for !all_seperated && max_itr < 100 {
+	for !all_seperated && max_itr < 40 {
 		all_seperated = true
 		for i := d.cells.Front(); i != nil; i = i.Next() {
 			// Check if a Cell has fellow cells in our target range bounding box
@@ -188,6 +187,18 @@ func (d *Dungeon) SeperateCells() {
 			d.PlaceCellsQuadTree()
 		}
 		max_itr++
+		// if (max_itr % 5 == 0) {
+			var sorted_cells []*Cell
+
+			for itr := d.cells.Front(); itr != nil; itr = itr.Next() {
+				sorted_cells = append(sorted_cells, itr.Value.(*Cell))
+			}
+			sort.Sort(ByDistance(sorted_cells))
+			d.cells = list.New()
+			for _, cell := range sorted_cells {
+				d.cells.PushBack(cell)
+			}
+		// }
 	}
 }
 
