@@ -60,6 +60,20 @@ func DrawCircle(gc draw2d.GraphicContext, x, y, radius float64) {
 	gc.Fill()
 }
 
+func DrawLine(gc draw2d.GraphicContext, a, b Point) {	
+	gc.SetStrokeColor(image.Black)
+	gc.SetLineWidth(3.0)
+	gc.MoveTo(a.x, a.y)
+	gc.LineTo(b.x, b.y)
+	gc.Stroke()
+}
+
+func DrawTriangle(gc draw2d.GraphicContext, t Triangle) {
+	DrawLine(gc, t.a, t.b)
+	DrawLine(gc, t.b, t.c)
+	DrawLine(gc, t.c, t.a)
+}
+
 func (d *Dungeon) DrawDungeon(fileName string) {
 	i, gc := initGc(1000, 1000)
 
