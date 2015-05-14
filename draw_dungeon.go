@@ -8,7 +8,7 @@ import (
 	"image/png"
 	"code.google.com/p/draw2d/draw2d"
 	"math"
-
+	"bitbucket.org/ariqchowdhury/bowyer_watson"
 )	
 
 func DrawToPngFile(filePath string, m image.Image) {
@@ -60,18 +60,18 @@ func DrawCircle(gc draw2d.GraphicContext, x, y, radius float64) {
 	gc.Fill()
 }
 
-func DrawLine(gc draw2d.GraphicContext, a, b Point) {	
+func DrawLine(gc draw2d.GraphicContext, a, b bowyer_watson.Point) {	
 	gc.SetStrokeColor(image.Black)
 	gc.SetLineWidth(3.0)
-	gc.MoveTo(a.x, a.y)
-	gc.LineTo(b.x, b.y)
+	gc.MoveTo(a.X, a.Y)
+	gc.LineTo(b.X, b.Y)
 	gc.Stroke()
 }
 
-func DrawTriangle(gc draw2d.GraphicContext, t Triangle) {
-	DrawLine(gc, t.a, t.b)
-	DrawLine(gc, t.b, t.c)
-	DrawLine(gc, t.c, t.a)
+func DrawTriangle(gc draw2d.GraphicContext, t bowyer_watson.Triangle) {
+	DrawLine(gc, t.A, t.B)
+	DrawLine(gc, t.B, t.C)
+	DrawLine(gc, t.C, t.A)
 }
 
 func (d *Dungeon) DrawDungeon(fileName string) {
