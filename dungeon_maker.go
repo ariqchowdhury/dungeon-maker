@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"math"
 	"sort"
+	"bitbucket.org/ariqchowdhury/bowyer_watson"
 )
 
 type Dungeon struct {
@@ -219,6 +220,16 @@ func(d *Dungeon) MakeDungeon() {
 }
 
 // Create the connections between cells on the grid
-func MakeCorriders() {
+func (d *Dungeon) MakeCorriders() {
+	cell_array := make([]bowyer_watson.Point, d.cells.Len(), d.cells.Len())
 
+	j := 0
+	for i := d.cells.Front(); i != nil; i = i.Next() {
+		cell_array[j].X = i.Value.(*Cell).x
+		cell_array[j].Y = i.Value.(*Cell).y
+		j++
+	}
+
+    // Need to get points for a Triangle that encompasses all points in the cell_array
+	// bowyer_watson.DelaunayTriangulation()
 }
