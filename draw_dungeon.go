@@ -8,7 +8,7 @@ import (
 	"image/png"
 	"code.google.com/p/draw2d/draw2d"
 	"math"
-	"bitbucket.org/ariqchowdhury/bowyer_watson"
+	"github.com/ariqchowdhury/bowyer_watson"
 )	
 
 func DrawToPngFile(filePath string, m image.Image) {

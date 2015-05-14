@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"math"
 	"sort"
-	"bitbucket.org/ariqchowdhury/bowyer_watson"
+	"github.com/ariqchowdhury/bowyer_watson"
 )
 
 type Dungeon struct {
